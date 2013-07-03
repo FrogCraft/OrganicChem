@@ -1,6 +1,7 @@
 package organicchem.core.block.tile;
 
 import net.minecraft.block.BlockFluid;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.ITankContainer;
@@ -49,14 +50,18 @@ public class TileEntityStorage extends TileEntityCommon implements ITankContaine
 
 	@Override
 	public LiquidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		return new LiquidStack(RegistryHelper.getItem(ItemOrganicLiquid.class), maxDrain)
-				.setRenderingIcon(BlockFluid.func_94424_b("lava"));
+		LiquidStack r = new LiquidStack(RegistryHelper.getItem(ItemOrganicLiquid.class), maxDrain);
+		r.extra = new NBTTagCompound();
+		r.extra.setString("test", "test3");
+		return r;
 	}
 
 	@Override
 	public LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain) {
-		return new LiquidStack(RegistryHelper.getItem(ItemOrganicLiquid.class), maxDrain)
-				.setRenderingIcon(BlockFluid.func_94424_b("lava"));
+		LiquidStack r = new LiquidStack(RegistryHelper.getItem(ItemOrganicLiquid.class), maxDrain);
+		r.extra = new NBTTagCompound();
+		r.extra.setString("test", "test3");
+		return r;
 	}
 
 	@Override
