@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.server.MinecraftServer;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -20,7 +21,7 @@ public class NetworkManager implements IPacketHandler {
 	
 	public static void sendPlayerMessage(EntityPlayer player, String text) {
 		if (player instanceof EntityPlayerMP) {
-			((EntityPlayerMP) player).sendChatToPlayer(text);
+			((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(new Packet3Chat(text));
 		} else if (player instanceof EntityPlayerSP) {
 			((EntityPlayerSP) player).addChatMessage(text);
 		}

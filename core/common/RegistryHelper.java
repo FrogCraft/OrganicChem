@@ -17,7 +17,7 @@ import net.minecraftforge.common.DimensionManager;
 
 public class RegistryHelper {
 	public static final RegistryHelper INSTANCE;
-	
+	//TODO same as modid
 	public static final String TEXTUREPATH = "organicchem";
 	
 	private static final String DIMENSIONPREFIX = "ID.Dimension.";

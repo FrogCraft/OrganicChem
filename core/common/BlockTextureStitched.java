@@ -1,5 +1,6 @@
 package organicchem.core.common;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,20 +11,22 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import net.minecraft.client.renderer.texture.Texture;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureStitched;
-import net.minecraft.client.texturepacks.ITexturePack;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.Resource;
+import net.minecraft.client.resources.ResourceManager;
+import net.minecraft.util.Icon;
+import net.minecraft.util.ResourceLocation;
 
-public class BlockTextureStitched extends TextureStitched {
+public class BlockTextureStitched extends TextureAtlasSprite
+{
 
-    public BlockTextureStitched(String name)
+    public BlockTextureStitched(String name, int subIndex)
     {
         super(name);
+        this.subIndex = subIndex;
     }
 
-    @Override
-    public void copyFrom(TextureStitched textureStitched)
+    public void copyFrom(TextureAtlasSprite textureStitched)
     {
         if(textureStitched.getIconName().equals("missingno") && mappedTexture != null)
             super.copyFrom(mappedTexture);
@@ -31,25 +34,36 @@ public class BlockTextureStitched extends TextureStitched {
             super.copyFrom(textureStitched);
     }
 
-    @Override
-    public boolean loadTexture(TextureManager manager, ITexturePack texturepack, String name, String fileName, java.awt.image.BufferedImage image, ArrayList textures)
+    public void updateAnimation()
     {
-        int extStart = fileName.lastIndexOf('.');
-        int indexStart = fileName.lastIndexOf('.', extStart - 1);
-        String textureFile = (new StringBuilder()).append("/").append(fileName.substring(0, indexStart)).append(".png").toString();
-        int index = Integer.parseInt(fileName.substring(indexStart + 1, extStart));
-        java.awt.image.BufferedImage bufferedImage;
-        try
+    }
+
+    public boolean load(ResourceManager manager, ResourceLocation location)
+        throws IOException
+    {
+        String name = location.func_110623_a();
+        int index = name.indexOf(':');
+        if(index != -1)
         {
-            bufferedImage = ImageIO.read(texturepack.getResourceAsStream(textureFile));
+            int extStart = name.lastIndexOf('.');
+            location = new ResourceLocation(location.func_110624_b(), (new StringBuilder()).append(name.substring(0, index)).append(name.substring(extStart)).toString());
         }
-        catch(IOException e)
+        return loadSubImage(manager.func_110536_a(location));
+    }
+
+    public boolean loadSubImage(Resource res)
+        throws IOException
+    {
+        String name = getIconName();
+        BufferedImage bufferedImage = (BufferedImage)cachedImages.get(name);
+        if(bufferedImage == null)
         {
-            //IC2.log.warning((new StringBuilder()).append("can't read texture ").append(textureFile).toString());
-            return false;
+            bufferedImage = ImageIO.read(res.func_110527_b());
+            cachedImages.put(name, bufferedImage);
         }
         int size = bufferedImage.getHeight();
         int count = bufferedImage.getWidth() / size;
+        int index = subIndex;
         if(count == 1 || count == 6 || count == 12)
             index %= count;
         else
@@ -58,23 +72,30 @@ public class BlockTextureStitched extends TextureStitched {
             index /= 6;
         } else
         {
-            //IC2.log.warning((new StringBuilder()).append("texture ").append(textureFile).append(" is not properly sized").toString());
-            return false;
+            //IC2.log.warning((new StringBuilder()).append("texture ").append(name).append(" is not properly sized").toString());
+            throw new IOException();
         }
-        bufferedImage = bufferedImage.getSubimage(index * size, 0, size, size);
+        field_130223_c = size;
+        field_130224_d = size;
+        comparisonImage = bufferedImage.getSubimage(index * size, 0, size, size);
         int rgbaData[] = new int[size * size];
-        bufferedImage.getRGB(0, 0, size, size, rgbaData, 0, size);
+        comparisonImage.getRGB(0, 0, size, size, rgbaData, 0, size);
         int hash = Arrays.hashCode(rgbaData);
-        List matchingTextures = (List)existingTextures.get(Integer.valueOf(hash));
+        java.util.List matchingTextures = (java.util.List)existingTextures.get(Integer.valueOf(hash));
         if(matchingTextures != null)
         {
+            int rgbaData2[] = new int[size * size];
             for(Iterator i$ = matchingTextures.iterator(); i$.hasNext();)
             {
                 BlockTextureStitched matchingTexture = (BlockTextureStitched)i$.next();
-                if(Arrays.equals(rgbaData, matchingTexture.comparisonImage))
+                if(matchingTexture.comparisonImage.getWidth() == size)
                 {
-                    mappedTexture = matchingTexture;
-                    return true;
+                    matchingTexture.comparisonImage.getRGB(0, 0, size, size, rgbaData2, 0, size);
+                    if(Arrays.equals(rgbaData, rgbaData2))
+                    {
+                        mappedTexture = matchingTexture;
+                        return false;
+                    }
                 }
             }
 
@@ -85,32 +106,36 @@ public class BlockTextureStitched extends TextureStitched {
             matchingTextures.add(this);
             existingTextures.put(Integer.valueOf(hash), matchingTextures);
         }
-        comparisonImage = rgbaData;
-        Texture texture = new Texture(name, 2, size, size, 10496, 6408, 9728, 9728, bufferedImage);
-        textures.add(texture);
+        field_110976_a.add(rgbaData);
         return true;
     }
 
-    //TODO what does this method do?
+    public Icon getRealTexture()
+    {
+        return ((Icon) (mappedTexture != null ? mappedTexture : this));
+    }
+
     public static void onPostStitch()
     {
         for(Iterator i$ = existingTextures.values().iterator(); i$.hasNext();)
         {
-            List textures = (List)i$.next();
-            Iterator ii$ = textures.iterator();
-            while(ii$.hasNext()) 
+            java.util.List textures = (java.util.List)i$.next();
+            Iterator j = textures.iterator();
+            while(j.hasNext()) 
             {
-                BlockTextureStitched texture = (BlockTextureStitched)ii$.next();
+                BlockTextureStitched texture = (BlockTextureStitched)j.next();
                 texture.comparisonImage = null;
             }
         }
 
+        cachedImages.clear();
         existingTextures.clear();
     }
 
-    private int comparisonImage[];
-    private TextureStitched mappedTexture;
+    private BufferedImage comparisonImage;
+    private TextureAtlasSprite mappedTexture;
+    private final int subIndex;
+    private static Map cachedImages = new HashMap();
     private static Map existingTextures = new HashMap();
-
 
 }

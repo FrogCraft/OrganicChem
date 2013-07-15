@@ -28,8 +28,8 @@ public class ContainerMicroscope extends ContainerCommon {
 	public void onGuiEvent(int param) {}
 
 	@Override
-	public void onCraftGuiClosed(EntityPlayer par1EntityPlayer) {
-		super.onCraftGuiClosed(par1EntityPlayer);
+	public void onContainerClosed(EntityPlayer par1EntityPlayer) {
+		super.onContainerClosed(par1EntityPlayer);
 		if (!this.world.isRemote) {
 			ItemStack item = inventory.getStackInSlot(0);
 			if (item != null) {

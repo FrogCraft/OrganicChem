@@ -11,6 +11,7 @@ import organicchem.core.item.*;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 import net.minecraft.item.Item;
+import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringTranslate;
 
 public class LanguageManager {
@@ -20,7 +21,7 @@ public class LanguageManager {
 	private Properties table;
 	
 	public static String translate(String str) {
-		return StringTranslate.getInstance().translateKey(str);
+		return StatCollector.translateToLocal(str);//StringTranslate.getInstance().translateKey(str);
 	}
 	
 	public static void init(File langFile) {
@@ -68,9 +69,9 @@ public class LanguageManager {
 		table.setProperty(forClass(ItemChemicalBottle.class), "试剂瓶");
 		//Block
 		table.setProperty(forClass(BlockMicroscope.class), "显微镜");
-		table.setProperty(forClass(BlockStorage.class, 0), "小型存储器");
-		table.setProperty(forClass(BlockStorage.class, 1), "中型存储器");
-		table.setProperty(forClass(BlockStorage.class, 2), "大型存储器");
+		table.setProperty(forClass(BlockStorage.class, 0), "小型存储罐");
+		table.setProperty(forClass(BlockStorage.class, 1), "中型存储罐");
+		table.setProperty(forClass(BlockStorage.class, 2), "大型存储罐");
 		//CreativeTabs
 		table.setProperty(RegistryHelper.CREATIVEPAGENAME_UNL, "OrganicChem");
 	}

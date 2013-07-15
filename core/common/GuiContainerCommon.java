@@ -7,15 +7,17 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public abstract class GuiContainerCommon extends GuiContainer {
-	private static final String PATH_PREFIX = "/mods/" + RegistryHelper.TEXTUREPATH + "/textures/gui/";
+	private static final String PATH_PREFIX = "textures/gui/";//"/mods/" + RegistryHelper.TEXTUREPATH + "/textures/gui/";
 	private static final String PATH_SUFFIX = ".png";
 	private boolean preventExchange = false;
 	private boolean handleButtonEvent = false;
 	protected TileEntity tileEntity;
-	protected String BACKGROUND;
+	//protected String BACKGROUND;
+	private ResourceLocation background; 
 
 	public GuiContainerCommon(ContainerCommon par1Container, World world, EntityPlayer player, int x, int y, int z) {
 		super(par1Container);
@@ -23,7 +25,8 @@ public abstract class GuiContainerCommon extends GuiContainer {
 	}
 	
 	protected void setBackground(String value) {
-		BACKGROUND = value;
+		//BACKGROUND = value;
+		background = new ResourceLocation(RegistryHelper.TEXTUREPATH, makeTexturePath(value));
 	}
 
 	@Override
@@ -31,7 +34,7 @@ public abstract class GuiContainerCommon extends GuiContainer {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
-		this.mc.renderEngine.bindTexture(makeTexturePath(BACKGROUND));
+		this.mc.func_110434_K().func_110577_a(background);
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 	}
 	

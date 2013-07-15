@@ -8,10 +8,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.liquids.LiquidContainerData;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidDictionary;
-import net.minecraftforge.liquids.LiquidStack;
 
 import organicchem.core.block.*;
 import organicchem.core.block.tile.TileEntityStorage;
@@ -25,7 +21,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-@Mod(modid = "OrganicChem", name = "Organic Chemistry", version = "0.0.0")
+@Mod(modid = "organicchem", name = "Organic Chemistry", version = "0.0.0")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
 channels={NetworkManager.CHANNEL}, packetHandler = NetworkManager.class)
 
@@ -42,12 +38,13 @@ public class mod_OrganicChem {
 		RegistryHelper.INSTANCE.createItemsAndBlocks();
 
 		//reg liquids
+		/*
 		LiquidContainerRegistry.registerLiquid(new LiquidContainerData(
 				LiquidDictionary.getOrCreateLiquid("OrgainicChemical",
 					new LiquidStack(RegistryHelper.getItemId(ItemOrganicLiquid.class), LiquidContainerRegistry.BUCKET_VOLUME)), 
 				new ItemStack(RegistryHelper.getItem(ItemChemicalBottle.class)),
 				new ItemStack(Item.glassBottle)));
-
+		*/
 
 		CraftingManager.getInstance().getRecipeList().add(new RecipeWriteSmiles());
 	}

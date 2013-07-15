@@ -26,7 +26,7 @@ public class RecipeWriteSmiles extends ShapelessRecipes {
 		ItemStack item;
 		for (int i = 0; i < par1InventoryCrafting.getSizeInventory(); ++i) {
 			item = par1InventoryCrafting.getStackInSlot(i);
-			if (item.getItem() == Item.writtenBook) {
+			if (item != null && item.getItem() == Item.writtenBook) {
 				String text = ((NBTTagString)(item.stackTagCompound.getTagList("pages").tagAt(0))).data;
 				ItemStack result = new ItemStack(RegistryHelper.getItem(ItemTube.class));
 				ItemTube.setSmiles(result, text);

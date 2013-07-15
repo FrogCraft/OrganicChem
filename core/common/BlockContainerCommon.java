@@ -11,7 +11,6 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.texture.TextureStitched;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -75,21 +74,12 @@ public abstract class BlockContainerCommon extends BlockContainer {
 	public void registerIcons(IconRegister iconRegister) {
 		String name = RegistryHelper.getName(this.getClass(), index);
 		String texturePath;
-		TextureStitched texture;
-		Constructor con;
-		try {
-			Class c = Class.forName("ic2.core.block.BlockTextureStitched");
-			con = c.getConstructor(String.class);
-		
-			for (int i = 0; i < 6; ++i) {
-				texturePath = RegistryHelper.TEXTUREPATH + ":" + name + "." + Integer.toString(i);
-				texture = new BlockTextureStitched(texturePath);//(TextureStitched) con.newInstance(texturePath);
-				((TextureMap)iconRegister).setTextureEntry(texturePath, texture);
-				iconList[i] = texture;
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+		BlockTextureStitched texture;
+		for (int i = 0; i < 6; ++i) {
+			texturePath = RegistryHelper.TEXTUREPATH + ":" + name + ":" + Integer.toString(i);
+			texture = new BlockTextureStitched(texturePath, i);//(TextureStitched) con.newInstance(texturePath);
+			((TextureMap)iconRegister).setTextureEntry(texturePath, texture);
+			iconList[i] = texture;
 		}
 	}
 	
